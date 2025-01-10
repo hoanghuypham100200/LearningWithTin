@@ -1,18 +1,11 @@
-//
-//  DemoAlamore.swift
-//  LearningWithTin
-//
-//  Created by Huy on 10/1/25.
-//
-
 import UIKit
+import Kingfisher
 
-class DemoAlamore: UIViewController {
+class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        print(KingfisherManager.shared)
     }
-
-
 }
