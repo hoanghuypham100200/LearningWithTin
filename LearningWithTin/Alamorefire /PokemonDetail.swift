@@ -28,6 +28,12 @@ class PokemonDetailViewController: UIViewController {
 
 
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            // Cập nhật giao diện mỗi lần view sắp xuất hiện
+          
+    }
     private func setupRx() {
         if let pokemonId = pokemonId {
             viewModel.fetchPokemonById(id: pokemonId)
@@ -144,6 +150,6 @@ class PokemonDetailViewController: UIViewController {
             // Fetch the sprite and set it to the image view
         if let spriteURL = viewModel.getSpriteURL(), let url = URL(string: spriteURL) {
                    spriteImageView.kf.setImage(with: url)
-               }
         }
+    }
 }

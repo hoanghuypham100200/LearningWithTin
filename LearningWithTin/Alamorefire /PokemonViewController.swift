@@ -1,7 +1,10 @@
 import UIKit
 import SnapKit
+import GoogleMobileAds
+class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, GADBannerViewDelegate, GADFullScreenContentDelegate {
 
-class PokemonViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    private var bannerView: GADBannerView!
+    private var interstitial: GADInterstitialAd?
 
     private let tableView = UITableView()
     private let label = UILabel()
@@ -21,6 +24,24 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         viewModel.updateView = { [weak self] in
             self?.updateUI()
         }
+        bannerView.load(GADRequest())
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Your custom code
+        adss()
+
+    }
+    private func adss(){
+        Task {
+              do {
+                interstitial = try await GADInterstitialAd.load(
+                  withAdUnitID: "ca-app-pub-3940256099942544/4411468910", request: GADRequest())
+                interstitial?.fullScreenContentDelegate = self
+              } catch {
+                print("Failed to load interstitial ad with error: \(error.localizedDescription)")
+              }
+            }
     }
 
     private func setupUI() {
@@ -38,11 +59,16 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         errorLabel.text = "We are under maintenance"
         errorLabel.font = UIFont.systemFont(ofSize: 25, weight: .bold)
         
+        bannerView = GADBannerView(adSize: GADAdSizeBanner)
+        bannerView.adUnitID = "ca-app-pub-3940256099942544/6300978111"
+        bannerView.rootViewController = self
+        bannerView.delegate = self
     }
     private func setupconstrains() {
         view.addSubview(tableView)
         view.addSubview(label)
         view.addSubview(errorView)
+        view.addSubview(bannerView)
         errorView.addSubview(errorLabel)
         errorView.addSubview(errorImageView)
         label.snp.makeConstraints {
@@ -51,7 +77,14 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         }
         tableView.snp.makeConstraints { make in
             make.top.equalTo(label.snp.bottom).offset(10)
-            make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(bannerView.snp.top)
+        }
+        bannerView.snp.makeConstraints {
+            $0.bottom.equalToSuperview().offset(-15)
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(tableView.snp.bottom)
+            $0.height.equalTo(50)
         }
         errorView.snp.makeConstraints { make in
             make.top.equalTo(label.snp.bottom).offset(10)
@@ -86,6 +119,12 @@ class PokemonViewController: UIViewController, UITableViewDataSource, UITableVie
         let pokemonDetailVC = PokemonDetailViewController()
         pokemonDetailVC.pokemonId = indexPath.row + 1
         navigationController?.pushViewController(pokemonDetailVC, animated: true)
+        if (interstitial != nil) {
+            interstitial!.present(fromRootViewController: self)
+        }
+        else {
+            print("errrrror")
+        }
     }
     
 }

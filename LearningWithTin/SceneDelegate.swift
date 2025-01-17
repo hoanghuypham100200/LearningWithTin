@@ -16,7 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Create a new UIWindow
         window = UIWindow(windowScene: windowScene)
         // Set your initial view controller
-        rootViewController = PokemonViewController()
+        rootViewController = RewardedAdViewController()
         let navigationController = UINavigationController(rootViewController: rootViewController)
 
         // Set the rootViewController
